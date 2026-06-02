@@ -4,8 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/src/frontend/static/css/style.css">
-<title>{{ .title }}</title>
+<title>{{ .post.Title }}</title>
 </head>
 <body>
+
+    <main class="article-container">
+        <!-- Navigation back to Home Feed -->
+        <div class="back-nav">
+            <a href="/api" class="back-link">← Back to publications</a>
+        </div>
+
+        <article>
+            <!-- Article Header Segment -->
+            <header class="article-header">
+                <h1 class="article-title">{{ .post.Title }}</h1>
+                <div class="article-meta">
+                    <span><strong>Author:</strong> User #{{ .post.Author_id }}</span>
+                    <span>•</span>
+                    <span><strong>Published:</strong> {{ .post.Created_at.Format "January 02, 2006" }}</span>
+                </div>
+            </header>
+
+            <!-- Main Long-form content reading block -->
+            <div class="article-body">
+                {{ .post.Body }}
+            </div>
+        </article>
+
+        <!-- Optional Debugger Component to reveal Meta_json values -->
+        {{ if .post.Meta_json }}
+        <details class="meta-inspector">
+            <summary>View Article Meta Schema Details</summary>
+            <code>{{ .post.Meta_json }}</code>
+        </details>
+        {{ end }}
+    </main>
+
 </body>
 </html>

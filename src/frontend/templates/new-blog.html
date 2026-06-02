@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/frontend/static/css/style.css">
+    <title>{{ .title }}</title>
+</head>
+<body>
+
+    <!-- Re-using wide-card definitions for dashboard consistency -->
+    <main class="article-container" style="max-width: 800px;">
+        <div class="back-nav" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="/api" class="back-link">← Public Site Feed</a>
+            <button id="logout-btn" style="background: none; border: none; color: #ef4444; font-weight:600; cursor: pointer;">Log Out</button>
+        </div>
+
+        <h2 style="font-family: Georgia, serif; margin-top: 0; margin-bottom: 24px;">Publish an Article</h2>
+        
+        <div id="alert" class="alert-box"></div>
+
+        <form id="blog-form">
+            <div class="form-group">
+                <label for="title">Article Title</label>
+                <input type="text" id="title" name="title" placeholder="e.g., Concurrency Patterns in Go" required>
+            </div>
+
+            <div class="form-group">
+                <label for="summary">Excerpt / Summary</label>
+                <input type="text" id="summary" name="summary" placeholder="A brief hook describing the content..." required>
+            </div>
+
+            <div class="form-group">
+                <label for="body">Content Body</label>
+                <textarea id="body" name="body" placeholder="Write your full story layout details here..." required></textarea>
+            </div>
+
+            <button type="submit" class="action-btn" style="margin-bottom: 0;">Publish Article</button>
+        </form>
+    </main>
+
+    <script>
+        document.getElementById('blog-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('alert');
+            alertBox.style.display = 'none';
+
+            const formData = new URLSearchParams(new FormData(e.target));
+
+            try {
+                // Submit directly to your protected endpoint
+                const response = await fetch('new-blog', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Authorization': `Bearer ${token}` // Pass JWT inside standard Bearer header
+                    },
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alertBox.className = "alert-box alert-success";
+                    alertBox.textContent = "Article created successfully! Redirecting...";
+                    alertBox.style.display = 'block';
+                    e.target.reset();
+                    
+                    setTimeout(() => {
+                        window.location.href = 'api';
+                    }, 1500);
+                } else {
+                    const data = await response.json();
+                    alertBox.className = "alert-box alert-error";
+                    alertBox.textContent = data.error || 'Failed to save blog details.';
+                    alertBox.style.display = 'block';
+                }
+            } catch (err) {
+                alertBox.className = "alert-box alert-error";
+                alertBox.textContent = 'Network communication failure.';
+                alertBox.style.display = 'block';
+            }
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        });
+    </script>
+</body>
+</html>

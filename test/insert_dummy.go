@@ -6,7 +6,6 @@ import "gold-as/src/backend/database"
 // CREATE TABLE users (
 //     id SERIAL PRIMARY KEY,
 //     username VARCHAR(50) UNIQUE NOT NULL,
-//     email VARCHAR(100) UNIQUE NOT NULL,
 //     password_hash TEXT NOT NULL,
 //     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 // );
@@ -21,9 +20,10 @@ import "gold-as/src/backend/database"
 //     meta_json JSONB DEFAULT '{}',
 //     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 //     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+// );
 
 func main() {
 	var conn, _ = database.Connect()
-	//database.InsertUserData(conn)
-	database.InsertPostData(conn)
+	database.InsertUserData(conn, "bob", "123abc")
+	database.InsertPostData(conn, 1, "first post", "first-post", "this is the first post", "lorem ipsum djbafidvbaoibvdb9aosvbaovb")
 }

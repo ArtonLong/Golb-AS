@@ -8,51 +8,88 @@
 </head>
 <body>
 
-    <!-- Dynamic Header Elements -->
+    <!-- Dynamic Context-Aware Top Navigation Bar Bar -->
+    <nav style="background: #ffffff; border-bottom: 1px solid #eaeaea;">
+        <div class="nav-bar">
+            <a href="/" class="logo-link">Golb AS</a>
+            
+            <div class="nav-buttons">
+                <!-- Guest View: Visual targets for logged-out sessions -->
+                <a href="login/" id="nav-login" class="btn-secondary">Log In</a>
+                <a href="register/" id="nav-register" class="btn-primary">Register</a>
+
+                <!-- User View: Visual targets for valid authenticated tokens -->
+                <a href="/api/admin/new-blog" id="nav-new-post" class="btn-primary hidden-nav">✍️ Write Post</a>
+                <button id="nav-logout" class="btn-secondary hidden-nav">Log Out</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section Elements -->
     <header class="blog-header">
-        <h1>The Go Developer Hub</h1>
-        <p>Articles, tutorials, and insights powered cleanly by Gin and pgx/v5</p>
+        <h1>Golb AS</h1>
+        <p>Golb AS vil ha en bloggløsning på en nettside. </p>
     </header>
 
+    <!-- Main Content Container Grid -->
     <main class="blog-container">
         <div class="section-title">Latest Publications</div>
 
         <div class="posts-grid">
-            <!-- Go loop directly parsing your Post Struct collections -->
             {{ range .posts }}
             <article class="post-card">
                 <div class="post-card-content">
-                    
-                    <!-- Metadata Fields -->
                     <div class="post-meta">
                         <span class="post-author">By User #{{ .Author_id }}</span>
                         <span class="post-date">• {{ .Created_at.Format "Jan 02, 2006" }}</span>
                     </div>
 
-                    <!-- Title mapping to explicit template bindings paths -->
                     <h2 class="post-title">
-                        <a href="/post/{{ .Slug }}">{{ .Title }}</a>
+                        <a href="post/{{ .Slug }}">{{ .Title }}</a>
                     </h2>
 
-                    <!-- Summary Display Area Content text strings blocks -->
                     <p class="post-summary">
                         {{ .Summary }}
                     </p>
 
-                    <!-- Dynamically constructed safe hyperlinking path -->
-                    <a href="/post/{{ .Slug }}" class="read-more-link">
+                    <a href="post/{{ .Slug }}" class="read-more-link">
                         Read Full Article <span>→</span>
                     </a>
-                    
                 </div>
             </article>
             {{ else }}
             <div class="empty-posts">
-                <p>Welcome! No matching blog publications were detected inside the target PostgreSQL database structure container right now.</p>
+                <p>Welcome! No matching blog publications were detected inside the target database.</p>
             </div>
             {{ end }}
         </div>
     </main>
 
+    <!-- JavaScript Session Session Checker Lifecycle -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if user has an active token stored locally
+            const token = localStorage.getItem('token');
+            
+            const loginBtn = document.getElementById('nav-login');
+            const registerBtn = document.getElementById('nav-register');
+            const newPostBtn = document.getElementById('nav-new-post');
+            const logoutBtn = document.getElementById('nav-logout');
+
+            if (token) {
+                // If logged in, swap the guest buttons for admin options
+                loginBtn.classList.add('hidden-nav');
+                registerBtn.classList.add('hidden-nav');
+                newPostBtn.classList.remove('hidden-nav');
+                logoutBtn.classList.remove('hidden-nav');
+            }
+
+            // Bind clear interactive event handler to trigger structural state reset
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('token');
+                window.location.reload(); // Refresh to clean interface layout states instantly
+            });
+        });
+    </script>
 </body>
 </html>

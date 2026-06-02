@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/frontend/static/css/style.css">
+    <title>{{ .title }}</title>
+</head>
+<body>
+
+    <main class="auth-container">
+        <h2 style="font-family: Georgia, serif; margin-top: 0; margin-bottom: 24px;">Account Login</h2>
+        
+        <div id="alert" class="alert-box"></div>
+
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required autocomplete="username">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="action-btn" style="width: 100%; margin-top: 10px; margin-bottom: 0;">Log In</button>
+        </form>
+
+        <div class="form-footer">
+            New here? <a href="/register">Create an account</a>
+        </div>
+    </main>
+
+    <script>
+        // Display a clean welcome toast indicator if navigated via registration setup parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('registered')) {
+            const box = document.getElementById('alert');
+            box.className = "alert-box alert-success";
+            box.textContent = "Registration successful! Please log in.";
+            box.style.display = "block";
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const alertBox = document.getElementById('alert');
+            alertBox.style.display = 'none';
+
+            const formData = new URLSearchParams(new FormData(e.target));
+
+            try {
+                const response = await fetch('login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    window.location.href = '/api/admin/new-blog';
+                } else {
+                    alertBox.className = "alert-box alert-error";
+                    alertBox.textContent = data.error || 'Invalid username or password.';
+                    alertBox.style.display = 'block';
+                }
+            } catch (err) {
+                alertBox.className = "alert-box alert-error";
+                alertBox.textContent = 'Server connection error.';
+                alertBox.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
