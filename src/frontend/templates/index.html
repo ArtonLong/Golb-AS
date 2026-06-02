@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/frontend/static/css/style.css">
+<title>{{ .title }}</title>
+</head>
+<body>
+
+    <!-- Dynamic Header Elements -->
+    <header class="blog-header">
+        <h1>The Go Developer Hub</h1>
+        <p>Articles, tutorials, and insights powered cleanly by Gin and pgx/v5</p>
+    </header>
+
+    <main class="blog-container">
+        <div class="section-title">Latest Publications</div>
+
+        <div class="posts-grid">
+            <!-- Go loop directly parsing your Post Struct collections -->
+            {{ range .posts }}
+            <article class="post-card">
+                <div class="post-card-content">
+                    
+                    <!-- Metadata Fields -->
+                    <div class="post-meta">
+                        <span class="post-author">By User #{{ .Author_id }}</span>
+                        <span class="post-date">• {{ .Created_at.Format "Jan 02, 2006" }}</span>
+                    </div>
+
+                    <!-- Title mapping to explicit template bindings paths -->
+                    <h2 class="post-title">
+                        <a href="/post/{{ .Slug }}">{{ .Title }}</a>
+                    </h2>
+
+                    <!-- Summary Display Area Content text strings blocks -->
+                    <p class="post-summary">
+                        {{ .Summary }}
+                    </p>
+
+                    <!-- Dynamically constructed safe hyperlinking path -->
+                    <a href="/post/{{ .Slug }}" class="read-more-link">
+                        Read Full Article <span>→</span>
+                    </a>
+                    
+                </div>
+            </article>
+            {{ else }}
+            <div class="empty-posts">
+                <p>Welcome! No matching blog publications were detected inside the target PostgreSQL database structure container right now.</p>
+            </div>
+            {{ end }}
+        </div>
+    </main>
+
+</body>
+</html>
