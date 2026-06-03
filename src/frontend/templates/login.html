@@ -59,7 +59,7 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    window.location.href = '/api/admin/new-blog';
+                    window.location.href = '/api/';
                 } else {
                     alertBox.className = "alert-box alert-error";
                     alertBox.textContent = data.error || 'Invalid username or password.';

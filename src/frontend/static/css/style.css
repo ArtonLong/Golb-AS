@@ -371,8 +371,3 @@ body {
 .btn-primary:hover {
     background-color: #008ca6;
 }
-
-/* Utility to ensure states are manipulated cleanly by JS toggles */
-.hidden-nav {
-    display: none !important;
-}

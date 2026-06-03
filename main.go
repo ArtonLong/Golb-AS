@@ -13,7 +13,6 @@ import (
 
 func main() {
 	var conn, _ = database.Connect()
-	posts := database.QueryPostsData(conn)
 
 	r := gin.Default()
 	r.Static("src/frontend/static", "./src/frontend/static")
@@ -22,14 +21,23 @@ func main() {
 	public := r.Group("/api")
 
 	public.GET("/", func(c *gin.Context) {
+		isAdmin := false
+		if auth.TokenValid(c) == nil {
+			isAdmin = true
+		}
+
+		posts := database.QueryPostsData(conn)
+
 		c.HTML(http.StatusOK, "index.html", gin.H{
 			"title":   "Blogs",
 			"heading": "Posts",
 			"posts":   posts,
+			"isAdmin": isAdmin,
 		})
 	})
 
 	public.GET("/post/:slug", func(c *gin.Context) {
+		posts := database.QueryPostsData(conn)
 		slug := c.Param("slug")
 
 		var post structs.Post
@@ -100,6 +108,11 @@ func main() {
 		c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 	})
 
+	public.POST("/logout", func(c *gin.Context) {
+		c.SetCookie("token", "", -1, "/", "localhost", false, true)
+		c.Redirect(http.StatusSeeOther, "/api")
+	})
+
 	protected := r.Group("/api/admin")
 	protected.Use(auth.JwtAuthMiddleware())
 	protected.GET("/new-blog", func(c *gin.Context) {
@@ -107,6 +120,7 @@ func main() {
 			"title": "new blog",
 		})
 	})
+
 	protected.POST("/new-blog", func(c *gin.Context) {
 		user_id, err := auth.ExtractTokenID(c)
 		if err != nil {

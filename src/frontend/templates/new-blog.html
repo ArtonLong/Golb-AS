@@ -12,7 +12,10 @@
     <main class="article-container" style="max-width: 800px;">
         <div class="back-nav" style="display: flex; justify-content: space-between; align-items: center;">
             <a href="/api" class="back-link">← Public Site Feed</a>
-            <button id="logout-btn" style="background: none; border: none; color: #ef4444; font-weight:600; cursor: pointer;">Log Out</button>
+            
+            <form action="/api/logout" method="POST" style="margin: 0; display: inline;">
+                <button type="submit" style="background: none; border: none; color: #ef4444; font-weight:600; cursor: pointer;">Log Out</button>
+            </form>
         </div>
 
         <h2 style="font-family: Georgia, serif; margin-top: 0; margin-bottom: 24px;">Publish an Article</h2>
@@ -53,7 +56,6 @@
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/x-www-form-urlencoded',
-                        'Authorization': `Bearer ${token}` // Pass JWT inside standard Bearer header
                     },
                     body: formData
                 });
@@ -65,7 +67,7 @@
                     e.target.reset();
                     
                     setTimeout(() => {
-                        window.location.href = 'api';
+                        window.location.href = 'api/';
                     }, 1500);
                 } else {
                     const data = await response.json();
@@ -82,7 +84,7 @@
 
         document.getElementById('logout-btn').addEventListener('click', () => {
             localStorage.removeItem('token');
-            window.location.href = '/login';
+            window.location.href = '/api';
         });
     </script>
 </body>

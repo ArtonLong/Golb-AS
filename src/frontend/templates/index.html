@@ -8,30 +8,37 @@
 </head>
 <body>
 
-    <!-- Dynamic Context-Aware Top Navigation Bar Bar -->
+    <!-- Server-Side Managed Navigation Bar -->
     <nav style="background: #ffffff; border-bottom: 1px solid #eaeaea;">
         <div class="nav-bar">
             <a href="/" class="logo-link">Golb AS</a>
             
             <div class="nav-buttons">
-                <!-- Guest View: Visual targets for logged-out sessions -->
-                <a href="login/" id="nav-login" class="btn-secondary">Log In</a>
-                <a href="register/" id="nav-register" class="btn-primary">Register</a>
-
-                <!-- User View: Visual targets for valid authenticated tokens -->
-                <a href="/api/admin/new-blog" id="nav-new-post" class="btn-primary hidden-nav">✍️ Write Post</a>
-                <button id="nav-logout" class="btn-secondary hidden-nav">Log Out</button>
+                <!-- Check the Boolean payload passed directly from Go controller context -->
+                {{ if .isAdmin }}
+                    <!-- Authenticated Admin View Options -->
+                    <a href="admin/new-blog" class="btn-primary">✍️ Write Post</a>
+                    
+                    <!-- Form fallback to handle seamless, secure server-driven POST logouts -->
+                    <form action="logout" method="POST" style="margin: 0; display: inline;">
+                        <button type="submit" class="btn-secondary">Log Out</button>
+                    </form>
+                {{ else }}
+                    <!-- Anonymous Guest View Options -->
+                    <a href="login" class="btn-secondary">Log In</a>
+                    <a href="register" class="btn-primary">Register</a>
+                {{ end }}
             </div>
         </div>
     </nav>
 
-    <!-- Header Section Elements -->
+    <!-- Blog Header Section -->
     <header class="blog-header">
         <h1>Golb AS</h1>
         <p>Golb AS vil ha en bloggløsning på en nettside. </p>
     </header>
 
-    <!-- Main Content Container Grid -->
+    <!-- Main Content Grid -->
     <main class="blog-container">
         <div class="section-title">Latest Publications</div>
 
@@ -65,31 +72,5 @@
         </div>
     </main>
 
-    <!-- JavaScript Session Session Checker Lifecycle -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if user has an active token stored locally
-            const token = localStorage.getItem('token');
-            
-            const loginBtn = document.getElementById('nav-login');
-            const registerBtn = document.getElementById('nav-register');
-            const newPostBtn = document.getElementById('nav-new-post');
-            const logoutBtn = document.getElementById('nav-logout');
-
-            if (token) {
-                // If logged in, swap the guest buttons for admin options
-                loginBtn.classList.add('hidden-nav');
-                registerBtn.classList.add('hidden-nav');
-                newPostBtn.classList.remove('hidden-nav');
-                logoutBtn.classList.remove('hidden-nav');
-            }
-
-            // Bind clear interactive event handler to trigger structural state reset
-            logoutBtn.addEventListener('click', () => {
-                localStorage.removeItem('token');
-                window.location.reload(); // Refresh to clean interface layout states instantly
-            });
-        });
-    </script>
 </body>
 </html>
